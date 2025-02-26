@@ -1,23 +1,51 @@
-<script setup></script>
+<script setup>
+import { useWeatherStore } from "./stores/weather";
+
+const weatherStore = useWeatherStore();
+</script>
 
 <template>
   <div class="container">
     <div class="wrap">
       <!--* Search Box -->
       <div class="search-box">
-        <input type="text" placeholder="Search..." class="search-bar" />
+        <input
+          type="text"
+          placeholder="Search..."
+          class="search-bar"
+          v-model="weatherStore.location_quary"
+          @keypress="weatherStore.fetchWeather"
+        />
       </div>
       <!--* Aria Info Box -->
-      <div class="weather-info">
+      <div class="weather-info" v-if="weatherStore.weather.main != undefined">
         <div class="location-box">
-          <div class="location">Dhaka</div>
-          <div class="date">17-12-2025</div>
+          <div class="location">
+            {{ weatherStore.weather.name }},
+            {{ weatherStore.weather.sys.country }}
+          </div>
+          <div class="date">{{ new Date().toLocaleString() }}</div>
         </div>
-      </div>
-      <!--* Weather Box -->
-      <div class="weather-box">
-        <div class="temp">22 °C</div>
-        <div class="weather">aabbvc</div>
+
+        <!--* Weather Box -->
+        <div class="weather-box">
+          <div class="temp">{{ weatherStore.weather.main.temp }} °C</div>
+          <div class="weather">{{ weatherStore.weather.weather[0].main }}</div>
+          <div class="icon">
+            <img
+              :src="`https://openweathermap.org/img/wn/${weatherStore.weather.weather[0].icon}@2x.png`"
+              alt=""
+            />
+          </div>
+          <div class="other-info">
+            <p class="pressure">
+              Pressure :{{ weatherStore.weather.main.pressure }} mb
+            </p>
+            <p class="pressure">
+              Humidity: {{ weatherStore.weather.main.humidity }}%
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -43,7 +71,7 @@
   box-shadow: 0px 8px 20px #00000065;
 }
 .wrap {
-  height: 600px;
+  height: auto;
   padding: 15px;
   border-radius: 25px;
   background-image: linear-gradient(
@@ -94,7 +122,7 @@
   display: inline-block;
   padding: 10px 25px;
   color: white;
-  font-size: 100px;
+  font-size: 80px;
   font-weight: 900;
   text-shadow: 5px 8px rgba(0, 0, 0, 0.25);
   background-color: rgba(255, 255, 255, 0.25);
@@ -108,5 +136,13 @@
   font-weight: 700;
   font-style: italic;
   text-shadow: 5px 8px rgba(0, 0, 0, 0.25);
+}
+.other-info {
+  display: flex;
+  justify-content: space-between;
+}
+.pressure {
+  color: aliceblue;
+  font-size: 18px;
 }
 </style>
